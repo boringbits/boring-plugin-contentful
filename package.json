@@ -1,5 +1,5 @@
 {
-  "name": "plugin-contentful",
+  "name": "boring-plugin-contentful",
   "version": "1.0.0",
   "description": "",
   "main": "dist/index.js",
