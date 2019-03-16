@@ -1,0 +1,26 @@
+{
+  "name": "plugin-contentful",
+  "version": "1.0.0",
+  "description": "",
+  "main": "dist/index.js",
+  "scripts": {
+    "test-debug": "NODE_ENV=unit-tests node --inspect-brk=9229 node_modules/mocha/bin/_mocha  --require ./src/babel_register $(find ./src -name '*-test.js')",
+    "build": "boringbits build-node && boringbits build-node --buildClient",
+    "test": "boringbits jest",
+    "test-watch": " boringbits jest --watch",
+    "prepublishOnly": "npm run build && npm run test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/boringbits/plugin-contentful.git"
+  },
+  "author": "Ryan Stevens",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/boringbits/plugin-contentful/issues"
+  },
+  "homepage": "https://github.com/boringbits/plugin-contentful#readme",
+  "devDependencies": {
+    "boringbits": "^3.35.1"
+  }
+}
