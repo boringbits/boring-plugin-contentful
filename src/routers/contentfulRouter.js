@@ -28,7 +28,6 @@ module.exports = function setupRoute(/* dependencies from boring */ boring) {
       res.json({
         page: pageModel,
         contentful: content.includes,
-        beep: 'boop',
       });
 
     }

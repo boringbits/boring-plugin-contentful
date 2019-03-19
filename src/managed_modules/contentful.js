@@ -1,22 +1,22 @@
 import { BLOCKS } from '@contentful/rich-text-types';
 import { documentToReactComponents } from '@contentful/rich-text-react-renderer';
-import {config} from 'boringbits';
 import * as contentful from 'contentful';
 
-const contentfulArgs = Object.keys(config.get('clients.contentful')).reduce((acc, key) => {
-  acc[key] = config.get('clients.contentful.'+ key);
-  return acc;
-}, {});
-
-const client = contentful.createClient(contentfulArgs);
 
 let ran = false;
 module.exports = function(BoringInjections) {
   if (ran) return;
   ran = true;
 
-  const { decorators } = BoringInjections;
+  const { decorators, config } = BoringInjections;
   const { registerSingleton } = decorators.injecture;
+
+  const contentfulArgs = Object.keys(config.get('clients.contentful')).reduce((acc, key) => {
+    acc[key] = config.get('clients.contentful.'+ key);
+    return acc;
+  }, {});
+
+  const client = contentful.createClient(contentfulArgs);
 
 
   @registerSingleton
@@ -38,6 +38,8 @@ module.exports = function(BoringInjections) {
       });
 
       if (!options.parse) return entries;
+
+      console.log(JSON.stringify(entries, null, 2));
       const parsedEntries = client.parseEntries(entries);
 
       const includes = entries.includes || [];
