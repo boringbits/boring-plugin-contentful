@@ -39,7 +39,6 @@ module.exports = function(BoringInjections) {
 
       if (!options.parse) return entries;
 
-      console.log(JSON.stringify(entries, null, 2));
       const parsedEntries = client.parseEntries(entries);
 
       const includes = entries.includes || [];
