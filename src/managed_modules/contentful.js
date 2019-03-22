@@ -65,7 +65,7 @@ module.exports = function(BoringInjections) {
         return {
           type: (item.sys.type === 'Asset') ? 'Asset' : item.sys.contentType.sys.id,
           id: item.sys.id,
-          value: Object.keys(item.fields).reduce((acc, field) => {
+          content: Object.keys(item.fields).reduce((acc, field) => {
             acc[field] = this.normalize(item.fields[field])
             return acc;
           }, {})
