@@ -25,6 +25,7 @@
     "contentful": "^4.3.0"
   },
   "devDependencies": {
-    "boringbits": "^3.35.2"
+    "boringbits": "^3.35.2",
+    "jest": "^24.5.0"
   }
 }
