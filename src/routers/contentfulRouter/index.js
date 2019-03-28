@@ -5,9 +5,11 @@ module.exports = function setupRoute(/* dependencies from boring */ boring) {
   const {
     decorators,
     injecture,
+    config,
   } = boring;
 
   const {
+    reactEntry,
     router,
     get,
   } = decorators.router;
@@ -15,7 +17,7 @@ module.exports = function setupRoute(/* dependencies from boring */ boring) {
   const contentfulAPI = injecture.get('ContentfulAPI');
 
   @router('/content')
-  class DefaultRouter {
+  class ContentfulRouter {
 
     @get('/data/pages/:path/info.json')
     async page_data(req, res) {
@@ -39,6 +41,22 @@ module.exports = function setupRoute(/* dependencies from boring */ boring) {
       const content = await contentfulAPI.getEntries('page', {'fields.alias': page_alias});
       res.json(content);
     }
+
+    @get('/sitemap')
+    @reactEntry({
+      clientRoot: __dirname + '/../../client',
+      app_dir: '',
+      reactRoot: 'sitemap',
+    })
+    sitemap(req, res) {
+      if (config.get('boring.isDevelopment', false) === true) {
+        res.renderRedux({});
+      }
+      else {
+        res.send('');
+      }
+    }
+
 
   }
 
