@@ -11,18 +11,19 @@ module.exports = function(BoringInjections) {
   const { decorators, config } = BoringInjections;
   const { registerSingleton } = decorators.injecture;
 
-  const contentfulArgs = Object.keys(config.get('clients.contentful')).reduce((acc, key) => {
-    acc[key] = config.get('clients.contentful.'+ key);
-    return acc;
-  }, {});
-
-  const client = contentful.createClient(contentfulArgs);
-
+  let client;
 
   @registerSingleton
   class ContentfulAPI {
 
     getClient() {
+
+      const contentfulArgs = Object.keys(config.get('clients.contentful', {})).reduce((acc, key) => {
+        acc[key] = config.get('clients.contentful.'+ key);
+        return acc;
+      }, {});
+
+      if (!client) client = contentful.createClient(contentfulArgs);
       return client;
     }
 
@@ -31,6 +32,7 @@ module.exports = function(BoringInjections) {
     }
 
     async getEntries(content_type, query, options={ parse: true, include: 10 }) {
+      const client = this.getClient();
       const entries = await client.getEntries({
         content_type,
         include: (options.include || 10),
