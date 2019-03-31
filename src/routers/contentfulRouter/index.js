@@ -1,12 +1,22 @@
 
 
-module.exports = function setupRoute(/* dependencies from boring */ boring) {
+module.exports = function setupRoute(/* dependencies from boring */ BoringInjections) {
+
+  const {
+    boring
+  } = BoringInjections;
+
+  boring.beforeSync('setReactHandlerPaths', (context) => {
+
+    context.reactHandlerPaths.modulesToRequire.foo = __dirname + '/../../client/components/foo';
+    // console.log(context);
+  });
 
   const {
     decorators,
     injecture,
     config,
-  } = boring;
+  } = BoringInjections;
 
   const {
     reactEntry,
@@ -44,6 +54,7 @@ module.exports = function setupRoute(/* dependencies from boring */ boring) {
 
     @get('/sitemap')
     @reactEntry({
+      sitemap: true,
       clientRoot: __dirname + '/../../client',
       app_dir: '',
       reactRoot: 'sitemap',
