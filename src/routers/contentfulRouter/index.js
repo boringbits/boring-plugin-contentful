@@ -8,7 +8,7 @@ module.exports = function setupRoute(/* dependencies from boring */ BoringInject
 
   boring.beforeSync('setReactHandlerPaths', (context) => {
 
-    context.reactHandlerPaths.modulesToRequire.foo = __dirname + '/../../client/components/foo';
+    context.reactHandlerPaths.modulesToRequire['contentViews.Asset'] = __dirname + '/../../client/components/Asset';
     // console.log(context);
   });
 
