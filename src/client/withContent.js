@@ -26,7 +26,8 @@ export function parse(obj, props={}) {
 }
 
 export function makeComponent(name) {
-  const Component = components[name];
+  const views = getContentViews();
+  const Component = views[name];
   if (!Component) return Empty;
   return Component;
 }
@@ -43,7 +44,7 @@ class WithContent extends React.Component {
     const views = getContentViews();
     return (
       <>
-        <Target {...propsForTarget} content={{
+        <Target {...propsForTarget} contentComponents={{
           views,
           ...injections
         }} />
