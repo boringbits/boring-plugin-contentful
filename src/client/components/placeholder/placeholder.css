@@ -1,0 +1,22 @@
+.placeholder {
+  border-radius: 5px;
+  background-color: #eeeeee;
+  width: 100%;
+  margin: 2px;
+  margin-top: 5px;
+}
+
+.placeholder .name {
+  border-top-left-radius: 5px;
+  border-top-right-radius: 5px;
+  background-color: #bcbcbc;
+  /* padding: 5px; */
+}
+
+.placeholder .body {
+  /* padding: 5px; */
+  border-left: dotted #000 1px;
+  border-right: dotted #000 1px;
+  border-bottom: dotted #000 1px;
+
+}
