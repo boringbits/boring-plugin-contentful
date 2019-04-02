@@ -1,6 +1,6 @@
 {
   "name": "boring-plugin-contentful",
-  "version": "2.0.1",
+  "version": "2.1.0",
   "description": "",
   "main": "dist/index.js",
   "scripts": {
@@ -23,10 +23,11 @@
   "dependencies": {
     "@contentful/rich-text-react-renderer": "^13.1.0",
     "@contentful/rich-text-types": "^13.1.0",
-    "contentful": "^4.3.0"
+    "contentful": "^4.3.0",
+    "mods2require": "^1.0.0"
   },
   "devDependencies": {
-    "boringbits": "^3.35.2",
+    "boringbits": "^3.37.0",
     "jest": "^24.5.0"
   }
 }

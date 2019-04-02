@@ -1,4 +1,5 @@
-
+import mods2require from 'mods2require';
+import {normalize} from 'path';
 
 module.exports = function setupRoute(/* dependencies from boring */ BoringInjections) {
 
@@ -6,10 +7,27 @@ module.exports = function setupRoute(/* dependencies from boring */ BoringInject
     boring
   } = BoringInjections;
 
-  boring.beforeSync('setReactHandlerPaths', (context) => {
+  boring.beforeSync('requireHandlerPaths', (context) => {
 
-    context.reactHandlerPaths.modulesToRequire['contentViews.Asset'] = __dirname + '/../../client/components/Asset';
-    // console.log(context);
+    const paths = context.reactHandlerPaths;
+
+    if (paths.includeContentViews !== false) {
+
+      mods2require(null, normalize(__dirname + '/../../client/components')).forEach(mod => {
+        paths.modulesToRequire[`contentViews.${mod.moduleName}`] = mod.requirePath;
+      });
+
+      const appViewDir = paths.contentViews ||  normalize([paths.app_dir, paths.baseAppPath, 'contentViews'].join('/'));
+      mods2require(null, appViewDir).forEach(mod => {
+        paths.modulesToRequire[`contentViews.${mod.moduleName}`] = mod.requirePath;
+      });
+
+      const withContentPath = normalize(__dirname + '/../../client/withContent');
+      const withContent = require(withContentPath);
+      withContent.importPath = withContentPath;
+      paths.decorators.withContent = withContent;
+    }
+
   });
 
   const {
@@ -54,7 +72,6 @@ module.exports = function setupRoute(/* dependencies from boring */ BoringInject
 
     @get('/sitemap')
     @reactEntry({
-      sitemap: true,
       clientRoot: __dirname + '/../../client',
       app_dir: '',
       reactRoot: 'sitemap',

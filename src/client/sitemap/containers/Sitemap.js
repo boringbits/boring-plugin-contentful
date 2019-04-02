@@ -5,8 +5,10 @@ import { getComponents } from 'boringbits/react';
 const {decorators} = getComponents();
 const {
   withStyles,
+  withContent
 } = decorators
 
+@withContent
 @withStyles(theme => ({
   container: {
     margin: '30px',
@@ -19,7 +21,6 @@ class SiteMap extends React.Component {
 
   render() {
 
-    const classes = this.props.classes;
     return (
       <>test123 abc sitemap</>
     )
