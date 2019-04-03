@@ -13,7 +13,7 @@ module.exports = function setupRoute(/* dependencies from boring */ BoringInject
 
     if (paths.includeContentViews !== false) {
 
-      mods2require(null, normalize(__dirname + '/../../client/components')).forEach(mod => {
+      mods2require(null, normalize(__dirname + '/../../client/plugin-components/content/views')).forEach(mod => {
         paths.modulesToRequire[`contentViews.${mod.moduleName}`] = mod.requirePath;
       });
 
@@ -22,7 +22,7 @@ module.exports = function setupRoute(/* dependencies from boring */ BoringInject
         paths.modulesToRequire[`contentViews.${mod.moduleName}`] = mod.requirePath;
       });
 
-      const withContentPath = normalize(__dirname + '/../../client/withContent');
+      const withContentPath = normalize(__dirname + '/../../client/plugin-components/decorators/withContent');
       const withContent = require(withContentPath);
       withContent.importPath = withContentPath;
       paths.decorators.withContent = withContent;
@@ -72,7 +72,7 @@ module.exports = function setupRoute(/* dependencies from boring */ BoringInject
 
     @get('/sitemap')
     @reactEntry({
-      clientRoot: __dirname + '/../../client',
+      clientRoot: __dirname + '/../../client/pages',
       app_dir: '',
       reactRoot: 'sitemap',
     })
