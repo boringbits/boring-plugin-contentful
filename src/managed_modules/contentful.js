@@ -18,12 +18,16 @@ module.exports = function(BoringInjections) {
 
     getClient() {
 
-      const contentfulArgs = ['space', 'accessToken', 'host'].reduce((acc, key) => {
-        acc[key] = config.get('clients.contentful.'+ key);
-        return acc;
-      }, {});
+      if (!client) {
+        const contentfulArgs = ['space', 'accessToken', 'host', 'environment'].reduce((acc, key) => {
+          const val = config.get('clients.contentful.'+ key);
+          if (!val) return acc;
 
-      if (!client) client = contentful.createClient(contentfulArgs);
+          acc[key] = val;
+          return acc;
+        }, {});
+        client = contentful.createClient(contentfulArgs);
+      }
       return client;
     }
 

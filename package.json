@@ -23,7 +23,7 @@
   "dependencies": {
     "@contentful/rich-text-react-renderer": "^13.1.0",
     "@contentful/rich-text-types": "^13.1.0",
-    "contentful": "^4.3.0",
+    "contentful": "^7.5.0",
     "mods2require": "^1.0.0"
   },
   "devDependencies": {
