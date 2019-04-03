@@ -4,8 +4,18 @@ import {normalize} from 'path';
 module.exports = function setupRoute(/* dependencies from boring */ BoringInjections) {
 
   const {
-    boring
+    decorators,
+    injecture,
+    boring,
+    config,
   } = BoringInjections;
+
+  const {
+    reactEntry,
+    router,
+    get,
+  } = decorators.router;
+
 
   boring.beforeSync('requireHandlerPaths', (context) => {
 
@@ -17,7 +27,12 @@ module.exports = function setupRoute(/* dependencies from boring */ BoringInject
         paths.modulesToRequire[`contentViews.${mod.moduleName}`] = mod.requirePath;
       });
 
-      const appViewDir = paths.contentViews ||  normalize([paths.app_dir, paths.baseAppPath, 'contentViews'].join('/'));
+      const globalViews = config.get('content.globalViews', [paths.app_dir, 'modules', '@content/views'].join('/'));
+      mods2require(null, normalize(globalViews)).forEach(mod => {
+        paths.modulesToRequire[`contentViews.${mod.moduleName}`] = mod.requirePath;
+      });
+
+      const appViewDir = paths.contentViews ||  normalize([paths.app_dir, paths.baseAppPath, 'content/views'].join('/'));
       mods2require(null, appViewDir).forEach(mod => {
         paths.modulesToRequire[`contentViews.${mod.moduleName}`] = mod.requirePath;
       });
@@ -30,17 +45,7 @@ module.exports = function setupRoute(/* dependencies from boring */ BoringInject
 
   });
 
-  const {
-    decorators,
-    injecture,
-    config,
-  } = BoringInjections;
 
-  const {
-    reactEntry,
-    router,
-    get,
-  } = decorators.router;
 
   const contentfulAPI = injecture.get('ContentfulAPI');
 
