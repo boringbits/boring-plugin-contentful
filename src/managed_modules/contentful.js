@@ -18,7 +18,7 @@ module.exports = function(BoringInjections) {
 
     getClient() {
 
-      const contentfulArgs = Object.keys(config.get('clients.contentful', {})).reduce((acc, key) => {
+      const contentfulArgs = ['space', 'accessToken', 'host'].reduce((acc, key) => {
         acc[key] = config.get('clients.contentful.'+ key);
         return acc;
       }, {});
