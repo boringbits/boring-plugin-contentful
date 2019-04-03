@@ -25,9 +25,6 @@ function createApi(getEntriesFn) {
   const configObj = {
     'clients.contentful.accessToken': 'bar',
     'clients.contentful.space': 'bar',
-    // this is kinda a hacky to pass this function into the
-    // global mocked version of contentful
-    'clients.contentful.getEntries': getEntriesFn
   };
 
   const injections = {
