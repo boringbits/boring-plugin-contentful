@@ -14,6 +14,15 @@ function getContentViews() {
   return getContentViews();
 }
 
+try {
+  __boring_internals.hot.subscribe(() => {
+    const components = getComponents();
+    if (components && components.context.contentViews) {
+      delete components.context.contentViews;
+    }
+  });
+} catch(e) {}
+
 function Empty(props) {
   return <></>
 }
