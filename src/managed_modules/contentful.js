@@ -1,7 +1,7 @@
 import { BLOCKS } from '@contentful/rich-text-types';
 import { documentToReactComponents } from '@contentful/rich-text-react-renderer';
 import * as contentful from 'contentful';
-
+import {createClient as createManagementClient} from 'contentful-management';
 
 let ran = false;
 module.exports = function(BoringInjections) {
@@ -12,6 +12,7 @@ module.exports = function(BoringInjections) {
   const { registerSingleton } = decorators.injecture;
 
   let client;
+  let managementClient;
 
   @registerSingleton
   class ContentfulAPI {
@@ -29,6 +30,22 @@ module.exports = function(BoringInjections) {
         client = contentful.createClient(contentfulArgs);
       }
       return client;
+    }
+
+
+    getManagementClient() {
+
+      if (!managementClient) {
+        const contentfulArgs = ['accessToken'].reduce((acc, key) => {
+          const val = config.get('clients.contentfulManagement.'+ key);
+          if (!val) return acc;
+
+          acc[key] = val;
+          return acc;
+        }, {});
+        managementClient = createManagementClient(contentfulArgs);
+      }
+      return managementClient;
     }
 
     async getPage(path) {

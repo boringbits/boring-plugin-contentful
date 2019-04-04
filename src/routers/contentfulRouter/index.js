@@ -14,6 +14,7 @@ module.exports = function setupRoute(/* dependencies from boring */ BoringInject
     reactEntry,
     router,
     get,
+    post,
   } = decorators.router;
 
 
@@ -52,6 +53,26 @@ module.exports = function setupRoute(/* dependencies from boring */ BoringInject
   @router('/content')
   class ContentfulRouter {
 
+    @post('/update')
+    async update(req, res) {
+      const client = contentfulAPI.getManagementClient();
+
+      const id = req.body.id;
+      const entityFields = req.body.entityFields;
+
+      client.getSpace(config.get('clients.contentful.space'))
+        .then((space) => space.getEnvironment(config.get('clients.contentful.environment', 'master')))
+        .then((environment) => environment.getEntry(id))
+        .then((entry) => {
+          Object.keys(entityFields).forEach(key => {
+            entry.fields[key]['en-US'] = entityFields[key];
+          });
+          return entry.update();
+        })
+        .then(entry => res.json(entry))
+        .catch(e => res.json({error: e}));
+    }
+
     @get('/data/pages/:path/info.json')
     async page_data(req, res) {
 
@@ -75,15 +96,48 @@ module.exports = function setupRoute(/* dependencies from boring */ BoringInject
       res.json(content);
     }
 
+    @get('/data/pages')
+    async sitemapData(req, res) {
+
+      const pages = await contentfulAPI.getEntries('page');
+      res.json(pages
+        .items
+        .map(item => ({url: item.content.url, name: item.content.title}))
+        .sort((itemA, itemB) => {
+          if (itemA.url < itemB.url) return -1;
+          else if (itemA > itemB.url) return 1;
+          else return 0;
+        }));
+    }
+
+    @get('/data/sitemap')
+    async sitemapData(req, res) {
+      const nodes = await contentfulAPI.getEntries('sitemapNode');
+      res.json(nodes);
+    }
+
     @get('/sitemap')
     @reactEntry({
       clientRoot: __dirname + '/../../client/pages',
       app_dir: '',
       reactRoot: 'sitemap',
     })
-    sitemap(req, res) {
+    async sitemap(req, res) {
       if (config.get('boring.isDevelopment', false) === true) {
-        res.renderRedux({});
+
+        const sitemap = await contentfulAPI.getEntries('sitemapNode');
+        const root = sitemap.items.filter(node => node.content.name === 'root').pop();
+
+        res.renderRedux({
+          components: {
+            preloadedState: {
+              sitemap: {
+                root: root,
+              },
+              contentful: sitemap.includes,
+            }
+          }
+        });
       }
       else {
         res.send('');
