@@ -16,7 +16,8 @@ function init(options = {entries: {}, getPage: {}}) {
       router: {
         router: param => target => target,
         reactEntry: param => target => target,
-        get: param => (target, name, desc) => desc
+        get: param => (target, name, desc) => desc,
+        post: param => (target, name, desc) => desc
       },
     },
     boring: {
