@@ -3,6 +3,7 @@ import React from 'react';
 import { getComponents } from 'boringbits/react';
 import {Helmet} from 'boringbits/client';
 import {connect} from 'react-redux';
+import SiteTree from '../components/SiteTree';
 
 const {decorators} = getComponents();
 const {
@@ -41,7 +42,8 @@ class SiteMap extends React.Component {
 
          </Helmet>
          <div className={'container-fluid ' + classes.container}>
-           <RootNode {...this.props.sitemap.root} />
+           {/* <RootNode {...this.props.sitemap.root} /> */}
+           <SiteTree sitemap={this.props.sitemap.root} />
          </div>
       </>
     )
