@@ -4,22 +4,28 @@ import uuid from 'uuid/v4';
 
 
 const Tree = isNode? () => <></> : require('react-d3-tree').Tree;
+const textPaddingTop = 20;
 
-class NodeLabel extends React.PureComponent {
+function NodeLabel(props) {
 
-  render() {
-    const {nodeData} = this.props
-    function click(event) {
-      console.log(nodeData);
-      // event.stopPropagation();
-      // event.preventDefault();
-    }
-    return (
-      <div style={{width: (this.props.nodeWidth * 2) + 'px', height: (this.props.nodeHeight + 30) +'px'}} onClick={click}>
-        <h6>{nodeData.name}</h6>
-      </div>
-    )
+  const style = {
+    width: (props.nodeWidth * 2) + 'px',
+    height: (props.nodeHeight + textPaddingTop) +'px',
+   // backgroundColor: 'red',
   }
+  const {nodeData} = props
+  function click(event) {
+    console.log(nodeData);
+    // event.stopPropagation();
+    // event.preventDefault();
+  }
+
+  return (
+    <div style={style} onClick={click}>
+      <h6>{nodeData.name}</h6>
+    </div>
+  )
+
 }
 
 function mapContent(item) {
@@ -38,13 +44,9 @@ class SiteTree extends React.Component {
 
     const dims = {
       node: {
-        width: 80,
+        width: 100,
         height: 90,
-      },
-      page: {
-        width: 1600,
-        height: 1000,
-      },
+      }
     };
 
     const nodeSvgShape = {
@@ -76,26 +78,37 @@ class SiteTree extends React.Component {
       },
     }
 
-
     this.setState({
       tree: [mapContent(this.props.sitemap)],
+      translate: {x: 0, y: 100},
       nodeSvgShape,
       styles,
       dims
     });
   }
 
+  componentDidMount() {
+    const dimensions = this.treeContainer.getBoundingClientRect();
+    this.setState({
+      translate: {
+        x: dimensions.width / 2,
+        y: 100,
+      }
+    });
+  }
 
   render() {
 
     return (
-      <div id="treeWrapper" style={{width: this.state.dims.page.width + 'px', height: this.state.dims.page.height + 'px'}}>
+      <div id="treeWrapper"
+        style={{width: '100%', height: '1000px'}}
+        ref={tc => (this.treeContainer = tc)}>
         <NoSsr>
           <Tree data={this.state.tree}
             styles={this.state.styles}
             nodeSvgShape={this.state.nodeSvgShape}
             orientation={'vertical'}
-            translate={{x: (this.state.dims.page.width/2), y: 100}}
+            translate={this.state.translate}
             separation={{
               siblings: 1.5,
               nonSiblings: 2
@@ -109,7 +122,7 @@ class SiteTree extends React.Component {
             nodeLabelComponent={{
               render: <NodeLabel nodeWidth={this.state.dims.node.width} nodeHeight={this.state.dims.node.height} />,
               foreignObjectWrapper: {
-                y: -65,
+                y: (((this.state.dims.node.height / 2) * -1) - textPaddingTop),
                 x: ((this.state.dims.node.width / 2) * -1),
                 width: (this.state.dims.node.width * 2)
               }
