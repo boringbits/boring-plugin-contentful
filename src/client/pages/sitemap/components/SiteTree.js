@@ -5,38 +5,6 @@ import uuid from 'uuid/v4';
 
 const Tree = isNode? () => <></> : require('react-d3-tree').Tree;
 
-const nodeWidth = 80;
-const nodeHeight = 90;
-
-const nodeSvgShape = {
-  shape: 'rect',
-  shapeProps: {
-    width: nodeWidth,
-    height: nodeHeight,
-    x:  ((nodeWidth / 2) * -1),
-    y: ((nodeHeight / 2) * -1),
-  }
-}
-
-const styles = {
-  nodes: {
-    node: {
-      circle: {
-        fill: '#26418f',
-      },
-      name: {},
-      attributes: {},
-    },
-    leafNode: {
-      circle: {
-        fill: '#8e99f3',
-      },
-      name: {},
-      attributes: {},
-    },
-  },
-}
-
 class NodeLabel extends React.PureComponent {
 
   render() {
@@ -47,7 +15,7 @@ class NodeLabel extends React.PureComponent {
       // event.preventDefault();
     }
     return (
-      <div style={{width: (nodeWidth * 2) + 'px', height: '120px'}} onClick={click}>
+      <div style={{width: (this.props.nodeWidth * 2) + 'px', height: (this.props.nodeHeight + 30) +'px'}} onClick={click}>
         <h6>{nodeData.name}</h6>
       </div>
     )
@@ -67,8 +35,53 @@ function mapContent(item) {
 class SiteTree extends React.Component {
 
   componentWillMount() {
+
+    const dims = {
+      node: {
+        width: 80,
+        height: 90,
+      },
+      page: {
+        width: 1600,
+        height: 1000,
+      },
+    };
+
+    const nodeSvgShape = {
+      shape: 'rect',
+      shapeProps: {
+        width: dims.node.width,
+        height: dims.node.height,
+        x:  ((dims.node.width / 2) * -1),
+        y: ((dims.node.height / 2) * -1),
+      }
+    }
+
+    const styles = {
+      nodes: {
+        node: {
+          circle: {
+            fill: '#26418f',
+          },
+          name: {},
+          attributes: {},
+        },
+        leafNode: {
+          circle: {
+            fill: '#8e99f3',
+          },
+          name: {},
+          attributes: {},
+        },
+      },
+    }
+
+
     this.setState({
-      tree: [mapContent(this.props.sitemap)]
+      tree: [mapContent(this.props.sitemap)],
+      nodeSvgShape,
+      styles,
+      dims
     });
   }
 
@@ -76,29 +89,29 @@ class SiteTree extends React.Component {
   render() {
 
     return (
-      <div id="treeWrapper" style={{width: '1200px', height: '1000px'}}>
+      <div id="treeWrapper" style={{width: this.state.dims.page.width + 'px', height: this.state.dims.page.height + 'px'}}>
         <NoSsr>
           <Tree data={this.state.tree}
-            styles={styles}
-            nodeSvgShape={nodeSvgShape}
+            styles={this.state.styles}
+            nodeSvgShape={this.state.nodeSvgShape}
             orientation={'vertical'}
-            translate={{x: 600, y: 100}}
+            translate={{x: (this.state.dims.page.width/2), y: 100}}
             separation={{
               siblings: 1.5,
               nonSiblings: 2
             }}
-            initialDepth={3}
+            initialDepth={1}
             collapsible={true}
             pathFunc={'elbow'}
             allowForeignObjects={true}
-            zoomable={false}
+            zoomable={true}
             shouldCollapseNeighborNodes={false}
             nodeLabelComponent={{
-              render: <NodeLabel />,
+              render: <NodeLabel nodeWidth={this.state.dims.node.width} nodeHeight={this.state.dims.node.height} />,
               foreignObjectWrapper: {
                 y: -65,
-                x: ((nodeWidth / 2) * -1),
-                width: (nodeWidth * 2)
+                x: ((this.state.dims.node.width / 2) * -1),
+                width: (this.state.dims.node.width * 2)
               }
             }}
           />
