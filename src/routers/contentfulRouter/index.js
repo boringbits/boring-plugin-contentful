@@ -123,7 +123,8 @@ module.exports = function setupRoute(/* dependencies from boring */ BoringInject
       reactRoot: 'sitemap',
     })
     async sitemap(req, res) {
-      if (config.get('boring.isDevelopment', false) === true) {
+      if ((config.get('boring.isDevelopment', false) === true) ||
+        config.get('boring.plugins.boring-plugin-contentful.showSitemap', false) === true) {
 
         const sitemap = await contentfulAPI.getEntries('sitemapNode');
         const root = sitemap.items.filter(node => node.content.name === 'root').pop();
