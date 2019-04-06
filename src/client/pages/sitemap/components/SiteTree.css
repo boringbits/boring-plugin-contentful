@@ -7,11 +7,36 @@
   margin-bottom: 0px;
 }
 
+
+
+#treeWrapper .nodeMask.hovering a {
+  display: inline;
+}
+
 #treeWrapper .nodeMask a {
   color: white;
   /* background-color: blue; */
   padding-left: 4px;
   margin-top:0px;
   padding-top:0px;
-  display: block;
+  display: none;
+}
+
+#treeWrapper .nodeMask .expand {
+  font-weight: bold;
+  color: #fff;
+  align-items: center;
+  position: absolute;
+  bottom: 0px;
+  display: table-cell;
+  padding: 0px;
+  margin: 0px;
+  vertical-align: middle;
+  border-radius: 50%;
+  border: 2px solid black;
+  height: auto;
+  text-align: center;
+   -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+     box-sizing: border-box;
 }

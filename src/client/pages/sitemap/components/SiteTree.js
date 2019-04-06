@@ -1,24 +1,42 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {isNode, NoSsr} from 'boringbits/client';
 import uuid from 'uuid/v4';
 import './SiteTree.css';
 
 const Tree = isNode? () => <></> : require('react-d3-tree').Tree;
 const textPaddingTop = 20;
+const expanderSize = 25;
 
 function NodeLabel(props) {
+
+  const [hovering, setHover] = useState(false);
 
   const style = {
     width: (props.nodeWidth * 2) + 'px',
     height: (props.nodeHeight + textPaddingTop) +'px',
-   // backgroundColor: 'red',
+    //backgroundColor: 'red',
   }
+
+  const expandStyle = {
+    width: expanderSize+'px',
+    height: expanderSize+'px',
+    lineHeight: ((expanderSize/2) + 5 ) + 'px',
+    left: ((props.nodeWidth - expanderSize) / 2) + 'px',
+    backgroundColor: '#5c6bc0',
+  };
+
   const {nodeData} = props;
   const space = window.app_vars.config.contentful.space;
   const environment = window.app_vars.config.contentful.environment;
 
   const manageLink = `https://app.contentful.com/spaces/${space}/environments/${environment}/entries/${nodeData.contentful_id}`;
   const pageUrl = (nodeData.url) ? nodeData.url : null;
+
+  function maskClick(event) {
+    if (event.expand) return;
+    event.stopPropagation();
+    event.preventDefault();
+  }
 
   function manageClick(event) {
     window.open(manageLink,'_meow');
@@ -32,14 +50,28 @@ function NodeLabel(props) {
     event.preventDefault();
   }
 
+  function expandClick(event) {
+    event.expand = true;
+  }
+
+  function over(event) {
+    setHover(true);
+  }
+
+  function out(event) {
+    setHover(false);
+  }
+
   return (
-    <div style={style} className={'nodeMask'}>
+    <div style={style} onClick={maskClick} className={'nodeMask ' + ((hovering) ? 'hovering' : 'nothovering')} onMouseOver={over} onMouseOut={out}>
       <h6>{nodeData.name}</h6>
       <a href={manageLink} onClick={manageClick}>manage</a>
-      { (pageUrl) ?
-        <a href={pageUrl} onClick={pageClick}>page</a>
-        : <></>
-      }
+      { (pageUrl) ? <a href={pageUrl} onClick={pageClick}>page</a>: <></> }
+      { (nodeData._children && nodeData._children.length>0) ?
+        <div style={expandStyle} className={'expand'} onClick={expandClick}>
+          {nodeData._collapsed ? '+' : '-'}
+        </div>
+        : <></>}
     </div>
   )
 
@@ -142,7 +174,8 @@ class SiteTree extends React.Component {
               foreignObjectWrapper: {
                 y: (((this.state.dims.node.height / 2) * -1) - textPaddingTop),
                 x: ((this.state.dims.node.width / 2) * -1),
-                width: (this.state.dims.node.width * 2)
+                width: (this.state.dims.node.width * 2),
+                height: (this.state.dims.node.height + textPaddingTop + (expanderSize/2))
               }
             }}
           />
