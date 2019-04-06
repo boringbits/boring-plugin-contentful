@@ -1,0 +1,17 @@
+
+#treeWrapper .nodeMask {
+  /* background-color: red; */
+}
+
+#treeWrapper .nodeMask h6 {
+  margin-bottom: 0px;
+}
+
+#treeWrapper .nodeMask a {
+  color: white;
+  /* background-color: blue; */
+  padding-left: 4px;
+  margin-top:0px;
+  padding-top:0px;
+  display: block;
+}

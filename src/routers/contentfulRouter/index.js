@@ -127,9 +127,17 @@ module.exports = function setupRoute(/* dependencies from boring */ BoringInject
         config.get('boring.plugins.boring-plugin-contentful.showSitemap', false) === true) {
 
         const sitemap = await contentfulAPI.getEntries('sitemapNode');
-        const root = sitemap.items.filter(node => node.content.name === 'root').pop();
+        const root = sitemap.items.filter(node => (node.content.name === 'home' || node.content.name === 'root')).pop();
 
         res.renderRedux({
+          layout: {
+            clientConfig: {
+              contentful: {
+                space: config.get('clients.contentful.space'),
+                environment: config.get('clients.contentful.environment', 'master'),
+              },
+            },
+          },
           components: {
             preloadedState: {
               sitemap: {

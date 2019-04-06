@@ -1,7 +1,7 @@
 import React from 'react';
 import {isNode, NoSsr} from 'boringbits/client';
 import uuid from 'uuid/v4';
-
+import './SiteTree.css';
 
 const Tree = isNode? () => <></> : require('react-d3-tree').Tree;
 const textPaddingTop = 20;
@@ -13,16 +13,33 @@ function NodeLabel(props) {
     height: (props.nodeHeight + textPaddingTop) +'px',
    // backgroundColor: 'red',
   }
-  const {nodeData} = props
-  function click(event) {
-    console.log(nodeData);
-    // event.stopPropagation();
-    // event.preventDefault();
+  const {nodeData} = props;
+  const space = window.app_vars.config.contentful.space;
+  const environment = window.app_vars.config.contentful.environment;
+
+  const manageLink = `https://app.contentful.com/spaces/${space}/environments/${environment}/entries/${nodeData.contentful_id}`;
+  const pageUrl = (nodeData.url) ? nodeData.url : null;
+
+  function manageClick(event) {
+    window.open(manageLink,'_meow');
+    event.stopPropagation();
+    event.preventDefault();
+  }
+
+  function pageClick(event) {
+    window.open(pageUrl,'_meow');
+    event.stopPropagation();
+    event.preventDefault();
   }
 
   return (
-    <div style={style} onClick={click}>
+    <div style={style} className={'nodeMask'}>
       <h6>{nodeData.name}</h6>
+      <a href={manageLink} onClick={manageClick}>manage</a>
+      { (pageUrl) ?
+        <a href={pageUrl} onClick={pageClick}>page</a>
+        : <></>
+      }
     </div>
   )
 
@@ -31,6 +48,7 @@ function NodeLabel(props) {
 function mapContent(item) {
   return {
     ...item.content,
+    contentful_id: item.id,
     name: (item.content.name || item.content.title),
     children: ((item.content.children && item.content.children.length>0) ? item.content.children.map(child => {
       return mapContent(child);
