@@ -22,7 +22,7 @@
   display: none;
 }
 
-#treeWrapper .nodeMask .expand {
+#treeWrapper .nodeMask .charButton {
   font-weight: bold;
   color: #fff;
   align-items: center;
@@ -39,4 +39,14 @@
    -webkit-box-sizing: border-box;
     -moz-box-sizing: border-box;
      box-sizing: border-box;
+}
+
+#treeWrapper .nodeMask.hovering .position {
+  opacity: 1;
+}
+
+
+#treeWrapper .nodeMask .position {
+  opacity: .1;
+  display: inline;
 }
