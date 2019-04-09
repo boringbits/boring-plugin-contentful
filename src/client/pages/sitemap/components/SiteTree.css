@@ -47,6 +47,6 @@
 
 
 #treeWrapper .nodeMask .position {
-  opacity: .1;
+  opacity: 0;
   display: inline;
 }
