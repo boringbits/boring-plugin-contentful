@@ -42,6 +42,10 @@
 }
 
 #treeWrapper .nodeMask.hovering .position {
+  opacity: .3;
+}
+
+#treeWrapper .nodeMask.hovering .position:hover {
   opacity: 1;
 }
 

@@ -1,5 +1,6 @@
 import React, {useState} from 'react';
 import icon from './icon.png';
+import iconEmpty from './icon-empty.png'
 
 export default function NodeLabel(props) {
 
@@ -10,6 +11,13 @@ export default function NodeLabel(props) {
     labelYOffset,
     iconBtnSize,
   } = props;
+
+  const pageUrl = (nodeData.url) ? nodeData.url : null;
+  const pageIconWidth = props.pageIconWidth || 25;
+  const pageIconHeight = props.pageIconHeight || 35;
+  const space = window.app_vars.config.contentful.space;
+  const environment = window.app_vars.config.contentful.environment;
+  const manageLink = `https://app.contentful.com/spaces/${space}/environments/${environment}/entries/${nodeData.contentful_id}`;
 
   const style = {
     marginLeft: (iconBtnSize /2) +'px',
@@ -44,11 +52,10 @@ export default function NodeLabel(props) {
     backgroundColor: '#5c6bc0',
   }
 
-  const pageIconWidth = props.pageIconWidth || 25;
-  const pageIconHeight = props.pageIconHeight || 35;
 
   const pageStyle = {
-    backgroundImage: `url(${icon})`,
+    backgroundImage: `url(${pageUrl ? icon: iconEmpty})`,
+    opacity: .5,
     width: pageIconWidth+ 'px',
     height: pageIconHeight+ 'px',
     display: 'block',
@@ -59,11 +66,6 @@ export default function NodeLabel(props) {
     left: ((iconBtnSize /2) + (props.nodeWidth / 2) - (pageIconWidth/2)) + 'px',
   };
 
-  const space = window.app_vars.config.contentful.space;
-  const environment = window.app_vars.config.contentful.environment;
-
-  const manageLink = `https://app.contentful.com/spaces/${space}/environments/${environment}/entries/${nodeData.contentful_id}`;
-  const pageUrl = (nodeData.url) ? nodeData.url : null;
 
   function maskClick(event) {
     if (event.expand) return;
@@ -105,8 +107,8 @@ export default function NodeLabel(props) {
   return (
     <div style={style} onClick={maskClick} className={'nodeMask ' + ((hovering) ? 'hovering' : 'nothovering')} onMouseOver={over} onMouseOut={out}>
       <h6>{nodeData.name}</h6>
-      <a href={manageLink} onClick={manageClick}>manage</a>
-        { (pageUrl) ? <a href={pageUrl} onClick={pageClick} style={pageStyle}></a>: <></> }
+      {/* <a href={manageLink} onClick={manageClick}>manage</a> */}
+        <a href={pageUrl} onClick={pageClick} style={pageStyle}></a>
         { (nodeData._children && nodeData._children.length>0) ?
           <div style={expandStyle} className={'charButton'} onClick={expandClick}>
             {nodeData._collapsed ? '+' : '-'}
