@@ -4,7 +4,7 @@ export default function register(injections) {
 
   return function SitemapNode(props) {
 
-    const {parse, makeComponent} = injections;
+    const {parse} = injections;
     const children = props.content.children || [];
     return (
       <div className={'name container-fluid'}>

@@ -1,6 +1,7 @@
 import React, {useState} from 'react';
 import icon from './icon.png';
 import iconEmpty from './icon-empty.png'
+import NodeName from './NodeName';
 
 export default function NodeLabel(props) {
 
@@ -25,6 +26,7 @@ export default function NodeLabel(props) {
     height: (props.nodeHeight + labelYOffset) +'px',
     //backgroundColor: 'red',
   }
+
 
   const expandStyle = {
     width: iconBtnSize+'px',
@@ -55,7 +57,7 @@ export default function NodeLabel(props) {
 
   const pageStyle = {
     backgroundImage: `url(${pageUrl ? icon: iconEmpty})`,
-    opacity: .5,
+    opacity: (pageUrl ? 1 : .5),
     width: pageIconWidth+ 'px',
     height: pageIconHeight+ 'px',
     display: 'block',
@@ -69,11 +71,6 @@ export default function NodeLabel(props) {
 
   function maskClick(event) {
     if (event.expand) return;
-    event.stopPropagation();
-    event.preventDefault();
-  }
-
-  function manageClick(event) {
     window.open(manageLink,'_meow');
     event.stopPropagation();
     event.preventDefault();
@@ -89,36 +86,40 @@ export default function NodeLabel(props) {
     event.expand = true;
   }
 
-  function over(event) {
-    setHover(true);
-  }
-
-  function out(event) {
-    setHover(false);
-  }
-
-  function moveLeft() {
+  function moveLeft(event) {
     if (props.moveLeft) props.moveLeft(nodeData);
+    event.stopPropagation();
+    event.preventDefault();
   }
-  function moveRight() {
+  function moveRight(event) {
     if (props.moveRight) props.moveRight(nodeData);
+    event.stopPropagation();
+    event.preventDefault();
+  }
+
+  function dragNode(event) {
+    console.log('Drag', event);
   }
 
   return (
-    <div style={style} onClick={maskClick} className={'nodeMask ' + ((hovering) ? 'hovering' : 'nothovering')} onMouseOver={over} onMouseOut={out}>
-      <h6>{nodeData.name}</h6>
-      {/* <a href={manageLink} onClick={manageClick}>manage</a> */}
-        <a href={pageUrl} onClick={pageClick} style={pageStyle}></a>
-        { (nodeData._children && nodeData._children.length>0) ?
-          <div style={expandStyle} className={'charButton'} onClick={expandClick}>
-            {nodeData._collapsed ? '+' : '-'}
-          </div>
-          : <></>
-        }
+    <div draggable={true}
+      style={style}
+      onClick={maskClick}
+      onDragStart={dragNode}
+      className={'nodeMask ' + ((hovering) ? 'hovering' : 'nothovering')}
+      onMouseOver={() => setHover(true)}
+      onMouseOut={() => setHover(false)}>
+      <NodeName nodeWidth={props.nodeWidth} name={nodeData.name}></NodeName>
+      <a href={pageUrl} onClick={pageClick} style={pageStyle}></a>
+      { (nodeData._children && nodeData._children.length>0) ?
+        <div style={expandStyle} className={'charButton'} onClick={expandClick}>
+          {nodeData._collapsed ? '+' : '-'}
+        </div>
+        : <></>
+      }
 
-        {nodeData.child_pos > 0 ? <div style={moveLeftStyle} className={'position charButton'} onClick={moveLeft}>&lt;</div> : <></>}
-        {nodeData.child_pos < (nodeData.children_length-1) ? <div style={moveRightStyle} className={'position charButton'} onClick={moveRight}>&gt;</div> : <></>}
-
+      {nodeData.child_pos > 0 ? <div style={moveLeftStyle} className={'position charButton'} onClick={moveLeft}>&lt;</div> : <></>}
+      {nodeData.child_pos < (nodeData.children_length-1) ? <div style={moveRightStyle} className={'position charButton'} onClick={moveRight}>&gt;</div> : <></>}
     </div>
   )
 

@@ -1,13 +1,11 @@
-import React, {useState} from 'react';
+import React from 'react';
 import {isNode, NoSsr, getComponents} from 'boringbits/client';
-import uuid from 'uuid/v4';
 import NodeLabel from './NodeLabel';
 import './SiteTree.css';
 import { withTheme } from '@material-ui/core/styles';
 
 
 const {decorators} = getComponents();
-
 const {withStyles} = decorators;
 
 
@@ -39,7 +37,6 @@ class SiteTree extends React.Component {
 
     const dims = this.props.dims;
     const theme = this.props.theme;
-    console.log('***', theme.palette.primary.main);
 
     const nodeSvgShape = {
       shape: 'rect',
@@ -71,8 +68,12 @@ class SiteTree extends React.Component {
     }
 
     this.setState({
+      width: this.props.dims.tree.width,
+      translate: {
+        x: (this.props.dims.tree.width / 2),
+        y: 100,
+      },
       tree: [mapContent(this.props.sitemap)],
-      translate: {x: 0, y: 100},
       nodeSvgShape,
       styles,
       dims
@@ -134,41 +135,42 @@ class SiteTree extends React.Component {
       <div id="treeWrapper"
         style={{width: '100%', height: '1000px'}}
         ref={tc => (this.treeContainer = tc)}>
-        <NoSsr>
-          <Tree data={this.state.tree}
-            styles={this.state.styles}
-            nodeSvgShape={this.state.nodeSvgShape}
-            orientation={'vertical'}
-            translate={this.state.translate}
-            separation={{
-              siblings: 1.5,
-              nonSiblings: 2
-            }}
-            initialDepth={1}
-            collapsible={true}
-            pathFunc={'elbow'}
-            allowForeignObjects={true}
-            zoomable={true}
-            shouldCollapseNeighborNodes={false}
-            nodeLabelComponent={{
-              render: <NodeLabel
-                pageIconWidth={20}
-                pageIconHeight={25}
-                moveLeft={this.moveLeft.bind(this)}
-                moveRight={this.moveRight.bind(this)}
-                iconBtnSize={this.props.iconBtnSize}
-                labelYOffset={this.props.labelYOffset}
-                nodeWidth={this.state.dims.node.width}
-                nodeHeight={this.state.dims.node.height} />,
-              foreignObjectWrapper: {
-                y: (((this.state.dims.node.height / 2) * -1) - this.props.labelYOffset),
-                x: ((this.state.dims.node.width / 2) * -1) - (this.props.iconBtnSize/2),
-                width: (this.state.dims.node.width * 2) + (this.props.iconBtnSize/2),
-                height: (this.state.dims.node.height + this.props.labelYOffset + (this.props.iconBtnSize/2))
-              }
-            }}
-          />
-        </NoSsr>
+          <NoSsr>
+            <Tree data={this.state.tree}
+              width={'99%'}
+              styles={this.state.styles}
+              nodeSvgShape={this.state.nodeSvgShape}
+              orientation={'vertical'}
+              translate={this.state.translate}
+              separation={{
+                siblings: 1.5,
+                nonSiblings: 2
+              }}
+              initialDepth={1}
+              collapsible={true}
+              pathFunc={'elbow'}
+              allowForeignObjects={true}
+              zoomable={false}
+              shouldCollapseNeighborNodes={false}
+              nodeLabelComponent={{
+                render: <NodeLabel
+                  pageIconWidth={20}
+                  pageIconHeight={25}
+                  moveLeft={this.moveLeft.bind(this)}
+                  moveRight={this.moveRight.bind(this)}
+                  iconBtnSize={this.props.iconBtnSize}
+                  labelYOffset={this.props.labelYOffset}
+                  nodeWidth={this.state.dims.node.width}
+                  nodeHeight={this.state.dims.node.height} />,
+                foreignObjectWrapper: {
+                  y: (((this.state.dims.node.height / 2) * -1) - this.props.labelYOffset),
+                  x: ((this.state.dims.node.width / 2) * -1) - (this.props.iconBtnSize/2),
+                  width: (this.state.dims.node.width * 2) + (this.props.iconBtnSize/2),
+                  height: (this.state.dims.node.height + this.props.labelYOffset + (this.props.iconBtnSize/2))
+                }
+              }}
+            />
+          </NoSsr>
       </div>
     );
   }
@@ -178,6 +180,9 @@ SiteTree.defaultProps = {
   labelYOffset: 20,
   iconBtnSize: 25,
   dims: {
+    tree: {
+      width: 2000,
+    },
     node: {
       width: 100,
       height: 90,

@@ -5,6 +5,8 @@ import {Helmet} from 'boringbits/client';
 import {connect} from 'react-redux';
 import SiteTree from '../components/SiteTree';
 import fetch from 'cross-fetch';
+import Grid from '@material-ui/core/Grid';
+
 
 const {decorators} = getComponents();
 const {
@@ -21,16 +23,18 @@ const {
 @withStyles(theme => ({
   container: {
     width: '100%',
-    height: '100%'
+    height: '100%',
+    flexGrow: 1,
   },
+  pagePane: {
+    backgroundColor: theme.palette.primary.light,
+  }
 }))
 class SiteMap extends React.Component {
 
   static path = '*';
 
   swap(node) {
-    console.log(this.props.sitemap.root)
-    console.log(node);
 
     fetch('/content/setChildren', {
       method: 'POST',
@@ -45,7 +49,6 @@ class SiteMap extends React.Component {
   render() {
 
     const classes = this.props.classes;
-    const RootNode = this.props.contentComponents.makeComponent('sitemapNode');
 
     return (
       <>
@@ -57,9 +60,16 @@ class SiteMap extends React.Component {
           <script src="//stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossOrigin="anonymous"></script>
 
          </Helmet>
-         <div className={'container-fluid ' + classes.container}>
-           {/* <RootNode {...this.props.sitemap.root} /> */}
-            <SiteTree sitemap={this.props.sitemap.root} swap={this.swap.bind(this)} />
+         <div className={classes.container}>
+          <Grid container>
+            <Grid item xs={2} className={classes.pagePane}>
+
+            </Grid>
+            <Grid item xs={10}>
+              <SiteTree sitemap={this.props.sitemap.root} swap={this.swap.bind(this)} />
+
+            </Grid>
+          </Grid>
          </div>
       </>
     )

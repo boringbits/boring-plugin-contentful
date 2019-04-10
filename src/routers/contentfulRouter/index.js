@@ -123,6 +123,12 @@ module.exports = function setupRoute(/* dependencies from boring */ BoringInject
 
     }
 
+    @get('/data/pages')
+    async allPages(req, res) {
+      const pages = await contentfulAPI.getEntries('page', {}, {parse: false, include: 0});
+      res.json(pages);
+    }
+
     @get('/data/page_alias/:alias')
     async getByAlias(req, res) {
       const page_alias = req.params.alias;

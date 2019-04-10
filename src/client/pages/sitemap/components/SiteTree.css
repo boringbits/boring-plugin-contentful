@@ -5,6 +5,9 @@
 
 #treeWrapper .nodeMask h6 {
   margin-bottom: 0px;
+  background-color: white;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 

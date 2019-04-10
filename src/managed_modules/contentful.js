@@ -48,15 +48,16 @@ module.exports = function(BoringInjections) {
       return managementClient;
     }
 
-    async getPage(path) {
-      return this.getEntries('page', {'fields.url': path }, {parse: true});
+    async getPage(path, options={parse: true, include: 10}) {
+      return this.getEntries('page', {'fields.url': path }, options);
     }
 
     async getEntries(content_type, query, options={ parse: true, include: 10 }) {
       const client = this.getClient();
+
       const entries = await client.getEntries({
         content_type,
-        include: (options.include || 10),
+        include: (options.include === 0) ? 0 : (options.include || 10),
         ...query
       });
 
