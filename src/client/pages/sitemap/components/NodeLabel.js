@@ -1,4 +1,5 @@
 import React, {useState} from 'react';
+import icon from './icon.png';
 
 export default function NodeLabel(props) {
 
@@ -6,42 +7,57 @@ export default function NodeLabel(props) {
 
   const {
     nodeData,
-    textPaddingTop,
-    expanderSize,
+    labelYOffset,
+    iconBtnSize,
   } = props;
 
   const style = {
-    marginLeft: (expanderSize /2) +'px',
+    marginLeft: (iconBtnSize /2) +'px',
     width: (props.nodeWidth * 2) + 'px',
-    height: (props.nodeHeight + textPaddingTop) +'px',
+    height: (props.nodeHeight + labelYOffset) +'px',
     //backgroundColor: 'red',
   }
 
   const expandStyle = {
-    width: expanderSize+'px',
-    height: expanderSize+'px',
-    lineHeight: ((expanderSize/2) + 5 ) + 'px',
-    left:  (expanderSize /2)+ ((props.nodeWidth - expanderSize) / 2) + 'px',
+    width: iconBtnSize+'px',
+    height: iconBtnSize+'px',
+    lineHeight: ((iconBtnSize/2) + 5 ) + 'px',
+    left:  (iconBtnSize /2)+ ((props.nodeWidth - iconBtnSize) / 2) + 'px',
     backgroundColor: '#5c6bc0',
   };
 
   const moveLeftStyle = {
-    width: expanderSize+'px',
-    height: expanderSize+'px',
-    lineHeight: ((expanderSize/2) + 5 ) + 'px',
+    width: iconBtnSize+'px',
+    height: iconBtnSize+'px',
+    lineHeight: ((iconBtnSize/2) + 5 ) + 'px',
     bottom: (props.nodeHeight/2) + 'px',
     left: '0px',
     backgroundColor: '#5c6bc0',
   }
 
   const moveRightStyle = {
-    width: expanderSize+'px',
-    height: expanderSize+'px',
-    lineHeight: ((expanderSize/2) + 5 ) + 'px',
+    width: iconBtnSize+'px',
+    height: iconBtnSize+'px',
+    lineHeight: ((iconBtnSize/2) + 5 ) + 'px',
     bottom: (props.nodeHeight/2) + 'px',
-    left:  (expanderSize /2)+ (props.nodeWidth - (expanderSize/2))  + 'px',
+    left:  (iconBtnSize /2)+ (props.nodeWidth - (iconBtnSize/2))  + 'px',
     backgroundColor: '#5c6bc0',
   }
+
+  const pageIconWidth = props.pageIconWidth || 25;
+  const pageIconHeight = props.pageIconHeight || 35;
+
+  const pageStyle = {
+    backgroundImage: `url(${icon})`,
+    width: pageIconWidth+ 'px',
+    height: pageIconHeight+ 'px',
+    display: 'block',
+    backgroundRepeat: 'no-repeat',
+    backgroundSize: `${pageIconWidth}px ${pageIconHeight}px`,
+    position: 'absolute',
+    top: ((labelYOffset) + (props.nodeHeight / 2) - (pageIconHeight/2)) + 'px',
+    left: ((iconBtnSize /2) + (props.nodeWidth / 2) - (pageIconWidth/2)) + 'px',
+  };
 
   const space = window.app_vars.config.contentful.space;
   const environment = window.app_vars.config.contentful.environment;
@@ -90,7 +106,7 @@ export default function NodeLabel(props) {
     <div style={style} onClick={maskClick} className={'nodeMask ' + ((hovering) ? 'hovering' : 'nothovering')} onMouseOver={over} onMouseOut={out}>
       <h6>{nodeData.name}</h6>
       <a href={manageLink} onClick={manageClick}>manage</a>
-        { (pageUrl) ? <a href={pageUrl} onClick={pageClick}>page</a>: <></> }
+        { (pageUrl) ? <a href={pageUrl} onClick={pageClick} style={pageStyle}></a>: <></> }
         { (nodeData._children && nodeData._children.length>0) ?
           <div style={expandStyle} className={'charButton'} onClick={expandClick}>
             {nodeData._collapsed ? '+' : '-'}

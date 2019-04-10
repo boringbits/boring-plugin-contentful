@@ -1,14 +1,17 @@
 import React, {useState} from 'react';
-import {isNode, NoSsr} from 'boringbits/client';
+import {isNode, NoSsr, getComponents} from 'boringbits/client';
 import uuid from 'uuid/v4';
 import NodeLabel from './NodeLabel';
 import './SiteTree.css';
+import { withTheme } from '@material-ui/core/styles';
+
+
+const {decorators} = getComponents();
+
+const {withStyles} = decorators;
 
 
 const Tree = isNode? () => <></> : require('react-d3-tree').Tree;
-const textPaddingTop = 20;
-const expanderSize = 25;
-
 
 function mapContent(item) {
   let childPos = 0;
@@ -26,16 +29,17 @@ function mapContent(item) {
   }
 }
 
+@withStyles((theme) => ({
+
+}))
+@withTheme()
 class SiteTree extends React.Component {
 
   componentWillMount() {
 
-    const dims = {
-      node: {
-        width: 100,
-        height: 90,
-      }
-    };
+    const dims = this.props.dims;
+    const theme = this.props.theme;
+    console.log('***', theme.palette.primary.main);
 
     const nodeSvgShape = {
       shape: 'rect',
@@ -51,14 +55,14 @@ class SiteTree extends React.Component {
       nodes: {
         node: {
           circle: {
-            fill: '#26418f',
+            fill: theme.palette.secondary.dark,
           },
           name: {},
           attributes: {},
         },
         leafNode: {
           circle: {
-            fill: '#8e99f3',
+            fill: theme.palette.secondary.light,
           },
           name: {},
           attributes: {},
@@ -87,12 +91,6 @@ class SiteTree extends React.Component {
 
   swap(nodeA, nodeB) {
 
-    const {
-      child_pos,
-      contentful_id
-    } = nodeB;
-
-    const tree = this.state.tree;
     const parent = nodeA.parent;
     const temp = {
       ...nodeB
@@ -107,8 +105,9 @@ class SiteTree extends React.Component {
     nodeA._children = temp._children;
 
     this.setState({
-      tree
-    });
+      tree: this.state.tree,
+    })
+    if (this.props.swap) this.props.swap(parent);
   }
 
   moveLeft(node) {
@@ -153,17 +152,19 @@ class SiteTree extends React.Component {
             shouldCollapseNeighborNodes={false}
             nodeLabelComponent={{
               render: <NodeLabel
+                pageIconWidth={20}
+                pageIconHeight={25}
                 moveLeft={this.moveLeft.bind(this)}
                 moveRight={this.moveRight.bind(this)}
-                expanderSize={expanderSize}
-                textPaddingTop={textPaddingTop}
+                iconBtnSize={this.props.iconBtnSize}
+                labelYOffset={this.props.labelYOffset}
                 nodeWidth={this.state.dims.node.width}
                 nodeHeight={this.state.dims.node.height} />,
               foreignObjectWrapper: {
-                y: (((this.state.dims.node.height / 2) * -1) - textPaddingTop),
-                x: ((this.state.dims.node.width / 2) * -1) - (expanderSize/2),
-                width: (this.state.dims.node.width * 2) + (expanderSize/2),
-                height: (this.state.dims.node.height + textPaddingTop + (expanderSize/2))
+                y: (((this.state.dims.node.height / 2) * -1) - this.props.labelYOffset),
+                x: ((this.state.dims.node.width / 2) * -1) - (this.props.iconBtnSize/2),
+                width: (this.state.dims.node.width * 2) + (this.props.iconBtnSize/2),
+                height: (this.state.dims.node.height + this.props.labelYOffset + (this.props.iconBtnSize/2))
               }
             }}
           />
@@ -173,58 +174,18 @@ class SiteTree extends React.Component {
   }
 }
 
+SiteTree.defaultProps = {
+  labelYOffset: 20,
+  iconBtnSize: 25,
+  dims: {
+    node: {
+      width: 100,
+      height: 90,
+    }
+  }
+}
+
 export default SiteTree;
 
 
 
-
-
-
-
-
-
-
-function addId(obj) {
-  if (obj instanceof Array) {
-    return obj.map(item => {
-      return addId(item);
-    })
-  } else {
-    const ret = {};
-    obj._id = uuid();
-    for (var prop in obj) {
-      if (obj.hasOwnProperty(prop)) {
-        if (typeof obj[prop] === 'object') {
-          ret[prop] = addId(obj[prop]);
-        }
-        else {
-          ret[prop] = obj[prop];
-        }
-      }
-    }
-    return ret;
-  }
-}
-
-function splice(obj, item) {
-  if (obj instanceof Array) {
-    for (let i=0; i<obj.length; i++) {
-      obj[i] = splice(obj[i], item);
-    }
-    return obj;
-  } else {
-    if (obj._id === item._id) {
-      obj._collapsed = item._collapsed;
-      // console.log('####', obj);
-      return obj;
-    }
-    for (var prop in obj) {
-      if (obj.hasOwnProperty(prop)) {
-        if (typeof obj[prop] === 'object') {
-          obj[prop] = splice(obj[prop], item);
-        }
-      }
-    }
-    return obj;
-  }
-}

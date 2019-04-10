@@ -1,5 +1,6 @@
 import mods2require from 'mods2require';
 import {normalize} from 'path';
+import { array } from 'prop-types';
 
 module.exports = function setupRoute(/* dependencies from boring */ BoringInjections) {
 
@@ -50,8 +51,42 @@ module.exports = function setupRoute(/* dependencies from boring */ BoringInject
 
   const contentfulAPI = injecture.get('ContentfulAPI');
 
+  async function getRoot() {
+    const sitemap = await contentfulAPI.getEntries('sitemapNode');
+    const root = sitemap.items.filter(node => (node.content.name === 'home' || node.content.name === 'root')).pop();
+    return {
+      root,
+      includes: sitemap.includes,
+    };
+  }
+
   @router('/content')
   class ContentfulRouter {
+
+    @post('/setChildren')
+    setChildren(req, res) {
+
+      const client = contentfulAPI.getManagementClient();
+
+      client.getSpace(config.get('clients.contentful.space'))
+        .then((space) => space.getEnvironment(config.get('clients.contentful.environment', 'dev')))
+        .then((environment) => environment.getEntry(req.body.id))
+        .then((entry) => {
+          const children = entry.fields.children['en-US'];
+          const childrenById = children.reduce((acc, child) => {
+            acc[child.sys.id] = child;
+            return acc;
+          }, {});
+          entry.fields.children['en-US'] = req.body.children.map(child => childrenById[child.id]);
+          return entry.update();
+        })
+        .then(entry => {
+          res.json(entry.toPlainObject());
+        })
+        .catch(e => {
+          res.json({error: e});
+        });
+    }
 
     @post('/update')
     async update(req, res) {
@@ -126,8 +161,7 @@ module.exports = function setupRoute(/* dependencies from boring */ BoringInject
       if ((config.get('boring.isDevelopment', false) === true) ||
         config.get('boring.plugins.boring-plugin-contentful.showSitemap', false) === true) {
 
-        const sitemap = await contentfulAPI.getEntries('sitemapNode');
-        const root = sitemap.items.filter(node => (node.content.name === 'home' || node.content.name === 'root')).pop();
+        const sitemap = await getRoot();
 
         res.renderRedux({
           layout: {
@@ -141,7 +175,7 @@ module.exports = function setupRoute(/* dependencies from boring */ BoringInject
           components: {
             preloadedState: {
               sitemap: {
-                root: root,
+                root: sitemap.root,
               },
               contentful: sitemap.includes,
             }
@@ -152,7 +186,6 @@ module.exports = function setupRoute(/* dependencies from boring */ BoringInject
         res.send('');
       }
     }
-
 
   }
 
