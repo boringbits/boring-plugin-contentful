@@ -73,6 +73,8 @@ export default function NodeLabel(props) {
     iconHeight = iconHeight * 1.5;
   }
   const pageStyle = {
+    margin: 0,
+    padding: 0,
     cursor: 'pointer',
     backgroundImage: `url(${iconUrl})`,
     opacity: ((canRecievePage || hasPage)  ? 1 : .5),

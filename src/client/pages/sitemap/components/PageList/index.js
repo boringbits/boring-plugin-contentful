@@ -37,7 +37,6 @@ const iconHeight = 20;
   name: {
     display: 'inline-block',
     fontSize: '20px',
-
   }
 }))
 class PageList extends React.Component {

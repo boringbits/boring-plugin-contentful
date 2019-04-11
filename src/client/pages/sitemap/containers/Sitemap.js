@@ -3,10 +3,10 @@ import React from 'react';
 import { getComponents } from 'boringbits/react';
 import {Helmet} from 'boringbits/client';
 import {connect} from 'react-redux';
+import PageList from '../components/PageList';
 import SiteTree from '../components/SiteTree';
 import fetch from 'cross-fetch';
 import Grid from '@material-ui/core/Grid';
-import PageList from '../components/PageList';
 
 const {decorators} = getComponents();
 const {

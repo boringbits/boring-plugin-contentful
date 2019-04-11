@@ -18,6 +18,7 @@ module.exports = function setupRoute(/* dependencies from boring */ BoringInject
     post,
   } = decorators.router;
 
+  BoringInjections.modules.requireGraph.addPathToClearCache(normalize(__dirname + '/../../'));
 
   boring.beforeSync('requireHandlerPaths', (context) => {
 
