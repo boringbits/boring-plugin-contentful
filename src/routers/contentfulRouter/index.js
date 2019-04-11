@@ -168,6 +168,7 @@ module.exports = function setupRoute(/* dependencies from boring */ BoringInject
         config.get('boring.plugins.boring-plugin-contentful.showSitemap', false) === true) {
 
         const sitemap = await getRoot();
+        const pages = await contentfulAPI.getEntries('page', {}, {parse: false, include: 0});
 
         res.renderRedux({
           layout: {
@@ -180,6 +181,7 @@ module.exports = function setupRoute(/* dependencies from boring */ BoringInject
           },
           components: {
             preloadedState: {
+              pages,
               sitemap: {
                 root: sitemap.root,
               },

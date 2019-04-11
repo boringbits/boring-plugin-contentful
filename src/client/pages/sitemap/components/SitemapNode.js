@@ -1,11 +1,14 @@
 import React, {useState} from 'react';
 import icon from './icon.png';
 import iconEmpty from './icon-empty.png'
+import iconGreen from './icon-green.png'
 import NodeName from './NodeName';
 
 export default function NodeLabel(props) {
 
   const [hovering, setHover] = useState(false);
+  const [dragOver, setDragOver] = useState(false);
+
 
   const {
     nodeData,
@@ -13,7 +16,9 @@ export default function NodeLabel(props) {
     iconBtnSize,
   } = props;
 
-  const pageUrl = (nodeData.url) ? nodeData.url : null;
+  const hasPage = nodeData.url ? true : false;
+
+  const pageUrl = (hasPage) ? nodeData.url : null;
   const pageIconWidth = props.pageIconWidth || 25;
   const pageIconHeight = props.pageIconHeight || 35;
   const space = window.app_vars.config.contentful.space;
@@ -21,6 +26,7 @@ export default function NodeLabel(props) {
   const manageLink = `https://app.contentful.com/spaces/${space}/environments/${environment}/entries/${nodeData.contentful_id}`;
 
   const style = {
+    cursor: 'default',
     marginLeft: (iconBtnSize /2) +'px',
     width: (props.nodeWidth * 2) + 'px',
     height: (props.nodeHeight + labelYOffset) +'px',
@@ -29,6 +35,7 @@ export default function NodeLabel(props) {
 
 
   const expandStyle = {
+    cursor: 'pointer',
     width: iconBtnSize+'px',
     height: iconBtnSize+'px',
     lineHeight: ((iconBtnSize/2) + 5 ) + 'px',
@@ -37,6 +44,7 @@ export default function NodeLabel(props) {
   };
 
   const moveLeftStyle = {
+    cursor: 'pointer',
     width: iconBtnSize+'px',
     height: iconBtnSize+'px',
     lineHeight: ((iconBtnSize/2) + 5 ) + 'px',
@@ -46,6 +54,7 @@ export default function NodeLabel(props) {
   }
 
   const moveRightStyle = {
+    cursor: 'pointer',
     width: iconBtnSize+'px',
     height: iconBtnSize+'px',
     lineHeight: ((iconBtnSize/2) + 5 ) + 'px',
@@ -54,18 +63,27 @@ export default function NodeLabel(props) {
     backgroundColor: '#5c6bc0',
   }
 
+  const canRecievePage = (!hasPage && dragOver);
+  const iconUrl = canRecievePage ? iconGreen : (pageUrl ? icon: iconEmpty);
 
+  let iconWidth = pageIconWidth;
+  let iconHeight = pageIconHeight;
+  if (canRecievePage) {
+    iconWidth = iconWidth * 1.5;
+    iconHeight = iconHeight * 1.5;
+  }
   const pageStyle = {
-    backgroundImage: `url(${pageUrl ? icon: iconEmpty})`,
-    opacity: (pageUrl ? 1 : .5),
-    width: pageIconWidth+ 'px',
-    height: pageIconHeight+ 'px',
+    cursor: 'pointer',
+    backgroundImage: `url(${iconUrl})`,
+    opacity: ((canRecievePage || hasPage)  ? 1 : .5),
+    width: iconWidth+ 'px',
+    height: iconHeight+ 'px',
     display: 'block',
     backgroundRepeat: 'no-repeat',
-    backgroundSize: `${pageIconWidth}px ${pageIconHeight}px`,
+    backgroundSize: `${iconWidth}px ${iconHeight}px`,
     position: 'absolute',
-    top: ((labelYOffset) + (props.nodeHeight / 2) - (pageIconHeight/2)) + 'px',
-    left: ((iconBtnSize /2) + (props.nodeWidth / 2) - (pageIconWidth/2)) + 'px',
+    top: ((labelYOffset) + (props.nodeHeight / 2) - (iconHeight/2)) + 'px',
+    left: ((iconBtnSize /2) + (props.nodeWidth / 2) - (iconWidth/2)) + 'px',
   };
 
 
@@ -97,20 +115,28 @@ export default function NodeLabel(props) {
     event.preventDefault();
   }
 
-  function dragNode(event) {
-    console.log('Drag', event);
+  function onDragOver(event) {
+    event.preventDefault();
+    if (window.pageDrag) setDragOver(true);
+  }
+
+  function onDrop(event) {
+    setDragOver(false);
+    console.log('DROP', window.pageDrag);
   }
 
   return (
     <div draggable={true}
       style={style}
       onClick={maskClick}
-      onDragStart={dragNode}
+      onDragOver={onDragOver}
+      onDragLeave={() => setDragOver(false)}
+      onDropCapture={onDrop}
       className={'nodeMask ' + ((hovering) ? 'hovering' : 'nothovering')}
       onMouseOver={() => setHover(true)}
       onMouseOut={() => setHover(false)}>
-      <NodeName nodeWidth={props.nodeWidth} name={nodeData.name}></NodeName>
-      <a href={pageUrl} onClick={pageClick} style={pageStyle}></a>
+      <NodeName nodeWidth={props.nodeWidth} name={nodeData.name} />
+      <a href={pageUrl} onClick={pageClick} style={pageStyle} onDragOver={onDragOver} onDrop={onDrop}></a>
       { (nodeData._children && nodeData._children.length>0) ?
         <div style={expandStyle} className={'charButton'} onClick={expandClick}>
           {nodeData._collapsed ? '+' : '-'}

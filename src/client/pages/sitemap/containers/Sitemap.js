@@ -6,7 +6,7 @@ import {connect} from 'react-redux';
 import SiteTree from '../components/SiteTree';
 import fetch from 'cross-fetch';
 import Grid from '@material-ui/core/Grid';
-
+import PageList from '../components/PageList';
 
 const {decorators} = getComponents();
 const {
@@ -18,7 +18,8 @@ const {
 @connect(
   state => ({
     sitemap: state.sitemap,
-  })
+    pages: state.pages,
+  }),
 )
 @withStyles(theme => ({
   container: {
@@ -63,7 +64,7 @@ class SiteMap extends React.Component {
          <div className={classes.container}>
           <Grid container>
             <Grid item xs={2} className={classes.pagePane}>
-
+              <PageList pages={this.props.pages} />
             </Grid>
             <Grid item xs={10}>
               <SiteTree sitemap={this.props.sitemap.root} swap={this.swap.bind(this)} />

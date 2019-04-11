@@ -1,6 +1,6 @@
 import React from 'react';
 import {isNode, NoSsr, getComponents} from 'boringbits/client';
-import NodeLabel from './NodeLabel';
+import SitemapNode from './SitemapNode';
 import './SiteTree.css';
 import { withTheme } from '@material-ui/core/styles';
 
@@ -153,7 +153,7 @@ class SiteTree extends React.Component {
               zoomable={false}
               shouldCollapseNeighborNodes={false}
               nodeLabelComponent={{
-                render: <NodeLabel
+                render: <SitemapNode
                   pageIconWidth={20}
                   pageIconHeight={25}
                   moveLeft={this.moveLeft.bind(this)}

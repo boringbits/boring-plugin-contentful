@@ -8,7 +8,7 @@
     "test": "boringbits jest",
     "test-watch": " boringbits jest --watch",
     "prepublishOnly": "npm run build && npm run test",
-    "start": "PORT=5000 boring_paths_server_base=\"\" npx boring start"
+    "start": "PORT=5000 boring_logger_level=\"trace\" boring_paths_server_base=\"\" npx boring start"
   },
   "repository": {
     "type": "git",
