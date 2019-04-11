@@ -22,6 +22,11 @@ function init(options = {entries: {}, getPage: {}}) {
     },
     boring: {
       beforeSync: () => {}
+    },
+    modules: {
+      requireGraph: {
+        addPathToClearCache: () => {}
+      }
     }
   }
 }
